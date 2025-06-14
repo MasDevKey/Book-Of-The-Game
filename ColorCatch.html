@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Catch Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+    }
+    #score {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="score">Score: 0</div>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0;
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      size: 40,
+      color: 'white'
+    };
+
+    const balls = [];
+    const colors = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF'];
+
+    function createBall() {
+      const size = 20 + Math.random() * 10;
+      balls.push({
+        x: Math.random() * canvas.width,
+        y: -size,
+        size: size,
+        speed: 2 + Math.random() * 3,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+
+    function drawPlayer() {
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+      ctx.fillStyle = player.color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawBalls() {
+      balls.forEach(ball => {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fillStyle = ball.color;
+        ctx.fill();
+        ctx.closePath();
+      });
+    }
+
+    function updateBalls() {
+      balls.forEach((ball, index) => {
+        ball.y += ball.speed;
+
+        const dx = ball.x - player.x;
+        const dy = ball.y - player.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < ball.size + player.size) {
+          score++;
+          balls.splice(index, 1);
+          document.getElementById('score').innerText = `Score: ${score}`;
+        } else if (ball.y > canvas.height) {
+          balls.splice(index, 1);
+        }
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlayer();
+      drawBalls();
+      updateBalls();
+      requestAnimationFrame(animate);
+    }
+
+    setInterval(createBall, 500);
+    animate();
+
+    window.addEventListener('mousemove', e => {
+      player.x = e.clientX;
+    });
+  </script>
+</body>
+</html>
