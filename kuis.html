@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Kuis Cepat</title></head>
+<body>
+<h1>Kuis Cepat</h1>
+<p id="q">Apa ibu kota Indonesia?</p>
+<input type="text" id="a"><button onclick="check()">Jawab</button>
+<p id="r"></p>
+<script>
+function check() {
+  let a = document.getElementById('a').value.trim().toLowerCase();
+  document.getElementById('r').textContent = a === 'jakarta' ? 'Benar!' : 'Salah!';
+}
+</script>
+</body>
+</html>
